@@ -1,0 +1,76 @@
+{
+  "equipment": [
+    {
+      "id": "eq-1",
+      "name": "Grill Line A",
+      "site": "Kitchen North",
+      "status": "ONLINE",
+      "temperature": 228.4,
+      "unit": "°C",
+      "alertLevel": "NONE",
+      "lastSeen": "2026-09-14T08:22:10.000Z"
+    },
+    {
+      "id": "eq-2",
+      "name": "Grill Line B",
+      "site": "Kitchen North",
+      "status": "ONLINE",
+      "temperature": 219.8,
+      "unit": "°C",
+      "alertLevel": "WARNING",
+      "lastSeen": "2026-09-14T08:22:04.000Z"
+    },
+    {
+      "id": "eq-3",
+      "name": "Cooling Cabinet 7",
+      "site": "Storage West",
+      "status": "OFFLINE",
+      "temperature": 8.1,
+      "unit": "°C",
+      "alertLevel": "CRITICAL",
+      "lastSeen": "2026-09-14T07:41:33.000Z"
+    },
+    {
+      "id": "eq-4",
+      "name": "Pump Station 2",
+      "site": "Utility Room",
+      "status": "ONLINE",
+      "temperature": 41.2,
+      "unit": "°C",
+      "alertLevel": "NONE",
+      "lastSeen": "2026-09-14T08:21:59.000Z"
+    }
+  ],
+  "workOrders": [
+    {
+      "id": "wo-1001",
+      "equipmentId": "eq-3",
+      "equipmentName": "Cooling Cabinet 7",
+      "title": "Investigate loss of connectivity",
+      "priority": "CRITICAL",
+      "assignee": "Service Team",
+      "status": "OPEN",
+      "createdAt": "2026-09-14T07:45:00.000Z"
+    },
+    {
+      "id": "wo-1002",
+      "equipmentId": "eq-2",
+      "equipmentName": "Grill Line B",
+      "title": "Inspect temperature drift",
+      "priority": "HIGH",
+      "assignee": "Maintenance",
+      "status": "IN_PROGRESS",
+      "createdAt": "2026-09-13T15:20:00.000Z"
+    },
+    {
+      "id": "wo-1003",
+      "equipmentId": "eq-4",
+      "equipmentName": "Pump Station 2",
+      "title": "Routine monthly inspection",
+      "priority": "LOW",
+      "assignee": "Hamid",
+      "status": "DONE",
+      "createdAt": "2026-09-11T09:10:00.000Z"
+    }
+  ]
+}

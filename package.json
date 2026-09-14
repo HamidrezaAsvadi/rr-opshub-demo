@@ -1,0 +1,14 @@
+{
+  "name": "rr-opshub-demo",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": ["backend", "frontend"],
+  "scripts": {
+    "dev": "concurrently -n API,WEB -c auto \"npm run dev -w backend\" \"npm run start -w frontend\"",
+    "build": "npm run build -w frontend",
+    "start:api": "npm run start -w backend"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.0"
+  }
+}

@@ -1,0 +1,16 @@
+services:
+  backend:
+    build: ./backend
+    container_name: opspulse-api
+    restart: unless-stopped
+    volumes:
+      - ./backend/data:/app/data
+
+  frontend:
+    build: ./frontend
+    container_name: opspulse-web
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "8080:80"
