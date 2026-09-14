@@ -1,0 +1,171 @@
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand__mark">OP</div>
+      <div>
+        <strong>OpsPulse</strong>
+        <small>Field Operations</small>
+      </div>
+    </div>
+    <nav>
+      <a class="nav-item nav-item--active">Dashboard</a>
+      <a class="nav-item">Equipment</a>
+      <a class="nav-item">Work orders</a>
+      <a class="nav-item">Reports</a>
+    </nav>
+    <div class="sidebar__footer">
+      <span class="dot dot--green"></span>
+      API connected
+    </div>
+  </aside>
+
+  <main class="content">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Operations overview</p>
+        <h1>Equipment & Work Orders</h1>
+      </div>
+      <button class="btn btn--primary" (click)="formVisible.set(true)">+ New work order</button>
+    </header>
+
+    @if (error()) {
+      <div class="alert">{{ error() }}</div>
+    }
+
+    @if (loading()) {
+      <div class="loading">Loading operational data…</div>
+    } @else {
+      <section class="stats" aria-label="Operational metrics">
+        <article class="stat-card">
+          <span>Equipment</span>
+          <strong>{{ summary()?.equipmentTotal ?? 0 }}</strong>
+          <small>Total monitored assets</small>
+        </article>
+        <article class="stat-card">
+          <span>Online</span>
+          <strong>{{ summary()?.online ?? 0 }}</strong>
+          <small>Reporting normally</small>
+        </article>
+        <article class="stat-card">
+          <span>Open work orders</span>
+          <strong>{{ summary()?.openWorkOrders ?? 0 }}</strong>
+          <small>Requires attention</small>
+        </article>
+        <article class="stat-card stat-card--danger">
+          <span>Critical alerts</span>
+          <strong>{{ summary()?.criticalAlerts ?? 0 }}</strong>
+          <small>Immediate action</small>
+        </article>
+      </section>
+
+      <section class="panel">
+        <div class="panel__header panel__header--responsive">
+          <div>
+            <p class="eyebrow">Live inventory</p>
+            <h2>Equipment</h2>
+          </div>
+          <div class="filters">
+            <input type="search" placeholder="Search equipment or site" [ngModel]="search()" (ngModelChange)="setSearch($event)" />
+            <select [ngModel]="statusFilter()" (ngModelChange)="setStatus($event)">
+              <option value="ALL">All statuses</option>
+              <option value="ONLINE">Online</option>
+              <option value="OFFLINE">Offline</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Equipment</th><th>Site</th><th>Status</th><th>Reading</th><th>Alert</th><th>Last seen</th><th></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of filteredEquipment(); track item.id) {
+                <tr>
+                  <td><strong>{{ item.name }}</strong></td>
+                  <td>{{ item.site }}</td>
+                  <td>
+                    <span class="status" [class.status--offline]="item.status === 'OFFLINE'">
+                      <span class="dot" [class.dot--green]="item.status === 'ONLINE'" [class.dot--red]="item.status === 'OFFLINE'"></span>
+                      {{ item.status }}
+                    </span>
+                  </td>
+                  <td>{{ item.temperature | number:'1.1-1' }} {{ item.unit }}</td>
+                  <td><span class="badge" [attr.data-level]="item.alertLevel">{{ item.alertLevel }}</span></td>
+                  <td>{{ item.lastSeen | date:'MMM d, HH:mm' }}</td>
+                  <td><button class="link-btn" (click)="openWorkOrderFor(item)">Create order</button></td>
+                </tr>
+              } @empty {
+                <tr><td colspan="7" class="empty">No equipment matches the current filter.</td></tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel__header">
+          <div><p class="eyebrow">Service workflow</p><h2>Work orders</h2></div>
+        </div>
+        <div class="work-grid">
+          @for (order of workOrders(); track order.id) {
+            <article class="work-card">
+              <div class="work-card__top">
+                <span [class]="priorityClass(order.priority)">{{ order.priority }}</span>
+                <span class="work-status">{{ order.status.replace('_', ' ') }}</span>
+              </div>
+              <h3>{{ order.title }}</h3>
+              <p>{{ order.equipmentName }}</p>
+              <dl>
+                <div><dt>Assigned</dt><dd>{{ order.assignee }}</dd></div>
+                <div><dt>Created</dt><dd>{{ order.createdAt | date:'MMM d, HH:mm' }}</dd></div>
+              </dl>
+              @if (order.status !== 'DONE') {
+                <button class="btn btn--secondary" (click)="moveStatus(order)">{{ order.status === 'OPEN' ? 'Start work' : 'Mark completed' }}</button>
+              } @else {
+                <div class="completed">✓ Completed</div>
+              }
+            </article>
+          }
+        </div>
+      </section>
+    }
+  </main>
+</div>
+
+@if (formVisible()) {
+  <div class="modal-backdrop" (click)="formVisible.set(false)">
+    <section class="modal" (click)="$event.stopPropagation()">
+      <div class="modal__header">
+        <div><p class="eyebrow">Maintenance workflow</p><h2>Create work order</h2></div>
+        <button class="icon-btn" aria-label="Close" (click)="formVisible.set(false)">×</button>
+      </div>
+      <form (ngSubmit)="createWorkOrder()">
+        <label>Equipment
+          <select name="equipmentId" [(ngModel)]="newOrder.equipmentId" required>
+            @for (item of equipment(); track item.id) {
+              <option [value]="item.id">{{ item.name }} — {{ item.site }}</option>
+            }
+          </select>
+        </label>
+        <label>Work description
+          <input name="title" [(ngModel)]="newOrder.title" minlength="3" required placeholder="e.g. Inspect heating relay" />
+        </label>
+        <div class="form-row">
+          <label>Priority
+            <select name="priority" [(ngModel)]="newOrder.priority">
+              <option value="LOW">Low</option><option value="MEDIUM">Medium</option><option value="HIGH">High</option><option value="CRITICAL">Critical</option>
+            </select>
+          </label>
+          <label>Assignee<input name="assignee" [(ngModel)]="newOrder.assignee" placeholder="Name or team" /></label>
+        </div>
+        <div class="modal__actions">
+          <button type="button" class="btn btn--ghost" (click)="formVisible.set(false)">Cancel</button>
+          <button type="submit" class="btn btn--primary" [disabled]="saving()">{{ saving() ? 'Creating…' : 'Create work order' }}</button>
+        </div>
+      </form>
+    </section>
+  </div>
+}
