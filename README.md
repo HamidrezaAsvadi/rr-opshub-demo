@@ -1,6 +1,6 @@
 # OpsPulse — Node.js + Angular Interview Demo
 
-A compact full-stack application designed as an interview portfolio project for a software company that builds operational, database-driven business applications.
+A compact full-stack application designed as a portfolio project for a software company that builds operational, database-driven business applications.
 
 **Stack**
 - Frontend: Angular 21 LTS standalone components, TypeScript, signals, HttpClient
@@ -13,7 +13,7 @@ A compact full-stack application designed as an interview portfolio project for 
 
 OpsPulse is a field-operations/equipment-monitoring dashboard. It shows equipment state, operational readings, alerts, and work orders. A user can create a work order from an equipment item and move work orders through `OPEN → IN_PROGRESS → DONE`.
 
-This is intentionally small enough to explain every part in an interview, while still showing a realistic flow:
+This is intentionally small enough to explain every part, while still showing a flow:
 
 ```mermaid
 flowchart LR
