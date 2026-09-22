@@ -1,6 +1,6 @@
 # OpsPulse — Node.js + Angular
 
-A compact full-stack application designed as a portfolio project for a software company that builds operational, database-driven business applications.
+A compact full-stack application project that builds operational, database-driven business applications.
 
 **Stack**
 - Frontend: Angular 21 LTS standalone components, TypeScript, signals, HttpClient
