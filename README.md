@@ -1,4 +1,4 @@
-# OpsPulse — Node.js + Angular Interview Demo
+# OpsPulse — Node.js + Angular
 
 A compact full-stack application designed as a portfolio project for a software company that builds operational, database-driven business applications.
 
